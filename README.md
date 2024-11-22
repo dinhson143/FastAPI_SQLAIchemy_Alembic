@@ -17,9 +17,9 @@
 
 
 ## SQLAlchemy
-1. [ ] SQLAlchemy Core
-2. [ ] SQLAlchemy ORM
-3. [ ] Thành phần chính trong SQLAlchemy: 
+1. [x] SQLAlchemy Core
+2. [x] SQLAlchemy ORM
+3. [x] Thành phần chính trong SQLAlchemy: 
    * Engine
    * Metadata
    * Table
