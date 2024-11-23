@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from src.routes import user_router
+from src.routes import user_router, queue_router
 
 app = FastAPI(
     title="BookStore API",
@@ -9,6 +9,7 @@ app = FastAPI(
 )
 
 app.include_router(user_router.router)
+app.include_router(queue_router.router)
 
 
 if __name__ == "__main__":

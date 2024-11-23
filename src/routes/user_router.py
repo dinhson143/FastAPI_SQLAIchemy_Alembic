@@ -22,7 +22,7 @@ SECRET_KEY = 'khfkdsjhfkjsdhfjkdfhdskfhsdiouoruewr464354c3xz1cdas6d4a'
 ALGORITHM = 'HS256'
 
 
-@router.post("/users/", status_code=status.HTTP_201_CREATED, tags=["Users"])
+@router.post("/users/", status_code=status.HTTP_201_CREATED, tags=["User"])
 async def create_user(create_user_request: CreateUserRequest, db: Session = Depends(get_db)):
     create_user_model = User(
         username=create_user_request.username,
@@ -35,7 +35,7 @@ async def create_user(create_user_request: CreateUserRequest, db: Session = Depe
     return create_user_model
 
 
-@router.post("/users/token", response_model=Token)
+@router.post("/users/token", response_model=Token, tags=["User"])
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                                  db: Session = Depends(get_db)):
     user = authenticate_user(form_data.username, form_data.password, db)
@@ -61,7 +61,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
                             detail=f"Could not validate user.: {e}")
 
 
-@router.get("/users/", response_model=dict)
+@router.get("/users/", response_model=dict, tags=["User"])
 async def get_user(user: Annotated[dict, Depends(get_current_user)]):
     if user is None:
         raise HTTPException(status_code=401, detail='Authentication Failed')
