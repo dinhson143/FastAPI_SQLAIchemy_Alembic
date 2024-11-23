@@ -16,7 +16,7 @@ from src.tables.user import User
 router = APIRouter()
 logging.basicConfig(level=logging.INFO)
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl="users/token")
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/users/token")
 
 SECRET_KEY = 'khfkdsjhfkjsdhfjkdfhdskfhsdiouoruewr464354c3xz1cdas6d4a'
 ALGORITHM = 'HS256'
