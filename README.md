@@ -47,6 +47,13 @@
 
 ## 1.Alembic
 
+1. [x] Alembic is a 🐍Python library that enables controlled and automated database migrations. This library utilizes SQLAlchemy and it allows for the management of changes in the database schema through scripts, which describe the modifications and can be applied automatically.
+2. [x] Reference:
+    - https://dev.to/r0mymendez/simplify-database-migrations-using-python-with-alembic-4bhd
+    - https://medium.com/@johnidouglasmarangon/using-migrations-in-python-sqlalchemy-with-alembic-docker-solution-bd79b219d6a
+
+![alembic](alembic_core.png "alembic")
+
 1. `alembic current`: Displays the current version of the database.
 2. `alembic history`: Lists all created migrations.
 3. `alembic heads`: Shows versions that have not been applied yet.
@@ -57,15 +64,22 @@
 8. `alembic revision --autogenerate -m "your message"`: Automatically generates a migration script with a custom message.
 
 ## 2.SQLAlchemy
-
+1. [x] SQLAlchemy is a 🐍 python library that implements ORM and allows you to perform different actions on a related database.
+2. [x] Reference: 
+   - https://dev.to/r0mymendez/simplify-database-migrations-using-python-with-alembic-4bhd
+   - https://medium.com/@johnidouglasmarangon/using-migrations-in-python-sqlalchemy-with-alembic-docker-solution-bd79b219d6a
 ### _Main Components_
 
    * SQLAlchemy Core
    * SQLAlchemy ORM
 
-### _Key Concepts in SQLAlchemy_
+### _The following are the key components of SQLAlchemy to understand how it interacts with the database:_
 
-   * Engine: The gateway for communication with the database (`create_engine`).
+   ![sqlalchemy](sqlalchemy.png "sqlalchemy")
+   * `Engine`: It is the interface that allows interaction with the database. It handles connections and executes queries. (`create_engine`).
+   * `Pool`: It is a collection of connections that allows reusing connections and improving query performance by reducing time.
+   * `Dialect`: It is the component that allows interaction with the database. Each dialect is designed to interact and translate queries for a database; By default, this library has dialects for MySQL, MariaDB, PostgreSQL, SQL Server, and Oracle. But there are external dialects, in which you should import other libraries.
+   * `DBAPI`: It is the interface that provides methods to enable communication between Python and the database.
    * Session: An object that manages communication between Python and the database, handling transactions and executing SQL commands.
    * Declarative Base: A way to define tables using ORM. Each table is defined as a Python class (`Base = declarative_base()`).
 
