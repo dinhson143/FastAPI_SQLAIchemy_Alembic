@@ -21,14 +21,14 @@ async def add_task(task: TaskRequest, channel: BlockingChannel = Depends(get_cha
     if not (1 <= task.priority <= 10):
         raise HTTPException(status_code=400, detail="Priority must be between 1 and 10.")
 
-    # Kết nối RabbitMQ và gửi tin nhắn
+    # Connect to RabbitMQ and send the message
     channel.basic_publish(
         exchange="",
         routing_key="task_queue",
         body=task.task_name,
         properties=pika.BasicProperties(
-            delivery_mode=2,  # Tin nhắn bền vững
-            priority=task.priority,  # Đặt mức độ ưu tiên
+            delivery_mode=2,  # Persistent message
+            priority=task.priority,  # Set priority level
         ),
     )
     return {"message": "Task added to queue", "task": task.task_name, "priority": task.priority}
@@ -37,35 +37,35 @@ async def add_task(task: TaskRequest, channel: BlockingChannel = Depends(get_cha
 @router.get("/tasks/", tags=["RabbitMQ"])
 async def get_tasks(channel: BlockingChannel = Depends(get_channel)):
     """
-    Tiêu thụ các task từ RabbitMQ và trả về danh sách task đã xử lý, kèm theo thời gian tiêu thụ.
+    Consume tasks from RabbitMQ and return a list of processed tasks along with processing time.
     """
     global total_tasks_to_process
 
-    # Lấy số lượng task cần xử lý từ hàng đợi
+    # Get the number of tasks to process from the queue
     total_tasks_to_process = get_task_queue_size(channel)
     print(f"Expecting to process {total_tasks_to_process} tasks.")
 
-    start_time = time.time()  # Lưu thời gian bắt đầu
+    start_time = time.time()  # Record start time
 
-    # Chỉ nhận 1 task tại một thời điểm (cải thiện hiệu suất)
+    # Only receive one task at a time (improve performance)
     channel.basic_qos(prefetch_count=1)
 
-    # Bắt đầu tiêu thụ message từ queue
+    # Start consuming messages from the queue
     print("Start consuming tasks...")
 
-    # Chạy một task bất đồng bộ để xử lý các message
+    # Run an asynchronous task to process messages
     while total_tasks_to_process > 0:
         method_frame, header_frame, body = channel.basic_get(queue="task_queue", auto_ack=False)
         if method_frame:
             process_task(channel, method_frame, header_frame, body)
         else:
-            # Nếu không có message mới, chờ một chút rồi kiểm tra lại
+            # If no new messages, wait a bit and check again
             await asyncio.sleep(1)
 
-    end_time = time.time()  # Lưu thời gian kết thúc
-    time_consumed = end_time - start_time  # Tính toán thời gian tiêu thụ
+    end_time = time.time()  # Record end time
+    time_consumed = end_time - start_time  # Calculate time spent
 
-    # Trả về danh sách các task đã xử lý và thời gian tiêu thụ
+    # Return the list of processed tasks and the time consumed
     return {
         "message": "All tasks processed",
         "processed_tasks": processed_tasks,
@@ -77,26 +77,26 @@ async def get_tasks(channel: BlockingChannel = Depends(get_channel)):
 def process_task(ch, method, properties, body):
     task_name = body.decode()
     print(f"Processing task: {task_name} (Priority: {properties.priority})")
-    asyncio.sleep(2)  # Mô phỏng thời gian xử lý
+    asyncio.sleep(2)  # Simulate processing time
     ch.basic_ack(delivery_tag=method.delivery_tag)
     processed_tasks.append(task_name)
 
-    # Kiểm tra số lượng task còn lại trong hàng đợi
+    # Check the number of remaining tasks in the queue
     task_count = get_task_queue_size(ch)
     print(f"Remaining tasks in queue: {task_count}")
 
-    # Cập nhật tổng số task đã xử lý
+    # Update the total number of tasks processed
     global total_tasks_to_process
     total_tasks_to_process = task_count
 
-    # Nếu không còn task nào trong hàng đợi, kích hoạt sự kiện
+    # If no tasks are left in the queue, trigger the event
     if task_count == 0:
-        task_processed_event.set()  # Tất cả task đã được xử lý
+        task_processed_event.set()  # All tasks have been processed
 
 
 def get_task_queue_size(channel: BlockingChannel) -> int:
     """
-    Kiểm tra số lượng task còn lại trong hàng đợi RabbitMQ.
+    Check the number of tasks remaining in the RabbitMQ queue.
     """
     queue = channel.queue_declare(queue="task_queue", passive=True)
     return queue.method.message_count
