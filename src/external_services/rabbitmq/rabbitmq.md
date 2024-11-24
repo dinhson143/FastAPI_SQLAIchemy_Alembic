@@ -31,9 +31,9 @@
 5. [x] `Plugin`: RabbitMQ hỗ trợ nhiều plugin như management plugin (giao diện quản lý), Shovel, và Federation.
 
 
-## 3. Các loại Exchange
+## 4. Các loại Exchange
 
-### 3.1 Direct Exchange
+### 4.1 Direct Exchange
 ![direct_exchange](./direct_exchange.png "direct_exchange")
 - Tin nhắn được định tuyến đến queue dựa trên sự trùng khớp chính xác của routing key.
 - Routing key từ tin nhắn phải khớp chính xác với binding key của hàng đợi
@@ -42,19 +42,19 @@
      1. [x] Một queue được ràng buộc với một direct exchange bởi một routing key K.
      2. [x] Khi có một message mới với routing key R đến direct exchange. Message sẽ được chuyển tới queue đó nếu R=K.
 
-### 3.2 Default Exchange
+### 4.2 Default Exchange
 - Là một Direct Exchange đặc biệt, được RabbitMQ cung cấp mặc định.
 - Không có tên exchange (tên rỗng: "").
 - Routing key phải trùng khớp chính xác với tên của hàng đợi.
 - Không cần khai báo hay cấu hình trước.
 - Ví dụ, nếu bạn tạo ra 1 queue với tên "hello-world", RabbitMQ broker sẽ tự động binding default exchange đến queue "hello-word" với routing key "hello-world".
 
-### 3.3 Fanout Exchange
+### 4.3 Fanout Exchange
 ![fanout_exchange](./fanout_exchange.png "fanout_exchange")
 - Tin nhắn được gửi đến tất cả các hàng đợi liên kết (binding) với exchange, bỏ qua routing key.
 - Phù hợp khi cần phát broadcast (phát thông tin tới mọi hàng đợi).
 
-### 3.4 Topic Exchange
+### 4.4 Topic Exchange
 - Tin nhắn được định tuyến tới các hàng đợi dựa trên routing key dạng mẫu (pattern).
 - Routing key sử dụng `.` để phân tách, và các mẫu hỗ trợ ký tự đại diện:
   1. [x] `*`: Đại diện cho một từ.
@@ -66,8 +66,15 @@
    3. [x] Cập nhật tin tức liên quan đến phân loại hoặc gắn thẻ (ví dụ: chỉ dành cho một môn thể thao hoặc đội cụ thể).
    4. [x] Điều phối các dịch vụ của các loại khác nhau trong cloud
 
-### 3.5 Headers Exchange
+### 4.5 Headers Exchange
 Tin nhắn được định tuyến dựa trên giá trị của các header properties, không dựa trên routing_key
 Cần cấu hình headers và x-match:
    1. [x] `x-match=all`: Tất cả các giá trị header phải khớp.
    2. [x] `x-match=any`: Chỉ cần một giá trị header khớp.
+
+## 5. RabbitMQ hoạt động như thế nào?
+
+1. [x] Producer gửi một tin nhắn đến exchange.
+2. [x] Exchange định tuyến tin nhắn dựa trên routing_key và các ràng buộc (bindings).
+3. [x] Tin nhắn được lưu vào các hàng đợi tương ứng.
+4. [x] Consumer kết nối tới queue để tiêu thụ tin nhắn.
