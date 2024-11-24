@@ -85,3 +85,6 @@
 
 ## 3.Pydantic
 - Pydantic is a Python library for data validation and settings management using Python type annotations. It ensures data integrity by parsing and validating input data.
+
+## 4.RabbitMQ 
+1. [x] [Docs](src/external_services/rabbitmq/rabbitmq.md)
