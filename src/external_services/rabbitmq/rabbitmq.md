@@ -79,3 +79,6 @@ Cần cấu hình headers và x-match:
 2. [x] Exchange định tuyến tin nhắn dựa trên routing_key và các ràng buộc (bindings).
 3. [x] Tin nhắn được lưu vào các hàng đợi tương ứng.
 4. [x] Consumer kết nối tới queue để tiêu thụ tin nhắn.
+
+## 5. Testing with RabbitMQ?
+![Testing](./kq.png "Testing")
